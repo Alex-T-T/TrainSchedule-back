@@ -1,27 +1,25 @@
-const { Stations } = require('../models/models')
-const RequestError = require('../utils/requestError')
+const db = require("../utils/db");
 
-const getStationController = async (req, res, next) => {
-    // console.log('req.body => ', req.body);
-    const { value } = req.body
+const getStationsByTrainNumber = async (trainNumber) => {
 
-    // if (!value) {
-    //     res.status(400).json('Empty fields of arrival or depart stations. Select them and try again!')
-    // }
-    // const station = await serch value in DB
-    // const station = { id: 3, name: "Bobryk" }
+    const query = 'SELECT t.train_number , t.train_name, r.station_name  \n' +
+        'FROM app.trains t JOIN app.routes r \n' +
+        'ON t.train_number = r.train_number  \n' +
+        'WHERE t.train_number = :trainNumber \n' +
+        'ORDER BY r.id ASC '
 
-    try {
-        const stations = await Stations.findAll()
-        console.log('stations: ', stations);
-
-        res.status(200).json(stations)
-    } catch (error) {
-        next(RequestError(500, 'Something wrong!'))
-    }
-
-
-
+    return await db.query(query, {
+        replacements: { trainNumber: trainNumber },
+        type: db.QueryTypes.SELECT
+    })
 }
 
-module.exports = { getStationController }
+const getAllStations = async () => {
+    const query = 'SELECT id, station_name FROM app.stations ORDER BY id ASC';
+
+    const stations = await db.query(query, { type: db.QueryTypes.SELECT });
+    return stations;
+
+};
+
+module.exports = { getStationsByTrainNumber, getAllStations }

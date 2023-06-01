@@ -8,11 +8,11 @@ router.use('/schedule', scheduleRouter)
 router.use('/station', stationRouter)
 
 router.use((req, res) => {
-    res.status(404).json({ message: '❌❌❌Not found.❌❌❌' });
+    res.status(404).json({ message: 'Not found.' });
 });
 
 router.use((err, req, res, next) => {
-    const { status = 500, message = "❌❌❌ BOOM Internal server error!❌❌❌" } = err;
+    const { status = 500, message = " Internal server error" } = err;
     res.status(status).json({ message });
 });
 
